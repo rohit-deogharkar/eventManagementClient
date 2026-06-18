@@ -1,11 +1,1 @@
 @import "tailwindcss";
-
-@layer base {
-  body {
-    @apply bg-slate-50 text-slate-800 antialiased;
-  }
-
-  a {
-    @apply text-indigo-600 hover:text-indigo-700;
-  }
-}

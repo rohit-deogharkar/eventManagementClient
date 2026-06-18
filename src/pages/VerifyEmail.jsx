@@ -1,38 +1,29 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { loginUser } from "../api/authApi";
-import { useAuth } from "../context/AuthContext";
+import { verifyEmail } from "../api/authApi";
 import Alert from "../components/Alert";
 import { getErrorMessage } from "../utils/getErrorMessage";
 import { btnPrimary, inputClass, labelClass } from "../utils/ui";
 
-const Login = () => {
+const VerifyEmail = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { login } = useAuth();
 
-  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [email, setEmail] = useState(location.state?.email || "");
+  const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState(location.state?.message || "");
-
-  const from = location.state?.from || "/";
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
-    setSuccess("");
 
     try {
-      const data = await loginUser(formData);
-      login(data.user, data.token);
-      navigate(from, { replace: true });
+      await verifyEmail({ email, otp });
+      navigate("/login", {
+        state: { message: "Email verified! You can now sign in." },
+      });
     } catch (err) {
       setError(getErrorMessage(err));
     } finally {
@@ -43,12 +34,11 @@ const Login = () => {
   return (
     <main className="flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-8">
       <div className="w-full max-w-md rounded-xl border border-slate-200 bg-white p-8 shadow-sm">
-        <h1 className="text-2xl font-extrabold text-slate-900">Welcome back</h1>
-        <p className="mt-1 mb-6 text-slate-500">Sign in to register for events</p>
+        <h1 className="text-2xl font-extrabold text-slate-900">Verify your email</h1>
+        <p className="mt-1 mb-6 text-slate-500">
+          Enter the 6-digit OTP sent to your email. It expires in 10 minutes.
+        </p>
 
-        {success && (
-          <Alert type="success" message={success} onClose={() => setSuccess("")} />
-        )}
         {error && <Alert message={error} onClose={() => setError("")} />}
 
         <form className="flex flex-col gap-5" onSubmit={handleSubmit}>
@@ -62,39 +52,45 @@ const Login = () => {
               name="email"
               className={inputClass}
               placeholder="you@example.com"
-              value={formData.email}
-              onChange={handleChange}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
               autoComplete="email"
             />
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label htmlFor="password" className={labelClass}>
-              Password
+            <label htmlFor="otp" className={labelClass}>
+              OTP Code
             </label>
             <input
-              id="password"
-              type="password"
-              name="password"
-              className={inputClass}
-              placeholder="Your password"
-              value={formData.password}
-              onChange={handleChange}
+              id="otp"
+              type="text"
+              name="otp"
+              className={`${inputClass} text-center text-2xl tracking-[0.5em] font-semibold`}
+              placeholder="000000"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
               required
-              autoComplete="current-password"
+              maxLength={6}
+              inputMode="numeric"
+              autoComplete="one-time-code"
             />
           </div>
 
-          <button type="submit" className={`${btnPrimary} w-full`} disabled={loading}>
-            {loading ? "Signing in..." : "Sign In"}
+          <button
+            type="submit"
+            className={`${btnPrimary} w-full`}
+            disabled={loading || otp.length !== 6}
+          >
+            {loading ? "Verifying..." : "Verify Email"}
           </button>
         </form>
 
         <p className="mt-6 text-center text-sm text-slate-500">
-          Don&apos;t have an account?{" "}
-          <Link to="/register" className="font-medium">
-            Create one
+          Already verified?{" "}
+          <Link to="/login" className="font-medium">
+            Sign in
           </Link>
         </p>
       </div>
@@ -102,4 +98,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default VerifyEmail;

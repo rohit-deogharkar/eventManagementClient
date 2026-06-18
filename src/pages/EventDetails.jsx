@@ -59,10 +59,14 @@ const EventDetails = () => {
     try {
       if (isRegistered) {
         await unregisterFromEvent(id);
-        setSuccess("You have been unregistered from this event.");
+        setSuccess(
+          "You have been unregistered. A confirmation email has been sent to your inbox.",
+        );
       } else {
         await registerForEvent(id);
-        setSuccess("You have successfully registered for this event!");
+        setSuccess(
+          "Registered successfully! A confirmation email with event details has been sent.",
+        );
       }
       await fetchEvent(false);
     } catch (err) {

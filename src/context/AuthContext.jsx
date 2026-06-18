@@ -3,11 +3,10 @@ import { createContext, useContext, useState } from "react";
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [token, setToken] = useState(() => localStorage.getItem("token"));
-  const [user, setUser] = useState(() => {
-    const stored = localStorage.getItem("user");
-    return stored ? JSON.parse(stored) : null;
-  });
+  const storedUser = localStorage.getItem("user");
+
+  const [token, setToken] = useState(localStorage.getItem("token"));
+  const [user, setUser] = useState(storedUser ? JSON.parse(storedUser) : null);
 
   const login = (userData, jwtToken) => {
     setUser(userData);

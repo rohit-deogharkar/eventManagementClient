@@ -6,6 +6,7 @@ import Events from "./pages/Events";
 import EventDetails from "./pages/EventDetails";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import VerifyEmail from "./pages/VerifyEmail";
 import CreateEvent from "./pages/CreateEvent";
 import EditEvent from "./pages/EditEvent";
 
@@ -20,6 +21,7 @@ function App() {
             <Route path="/events/:id" element={<EventDetails />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/verifyEmail" element={<VerifyEmail />} />
             <Route
               path="/create-event"
               element={

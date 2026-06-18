@@ -1,14 +1,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { registerUser } from "../api/authApi";
-import { useAuth } from "../context/AuthContext";
 import Alert from "../components/Alert";
 import { getErrorMessage } from "../utils/getErrorMessage";
 import { btnPrimary, inputClass, labelClass } from "../utils/ui";
 
 const Register = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -29,9 +27,8 @@ const Register = () => {
     setError("");
 
     try {
-      const data = await registerUser(formData);
-      login(data.user, data.token);
-      navigate("/");
+      await registerUser(formData);
+      navigate("/verifyEmail", { state: { email: formData.email } });
     } catch (err) {
       setError(getErrorMessage(err));
     } finally {
@@ -44,7 +41,7 @@ const Register = () => {
       <div className="w-full max-w-md rounded-xl border border-slate-200 bg-white p-8 shadow-sm">
         <h1 className="text-2xl font-extrabold text-slate-900">Create account</h1>
         <p className="mt-1 mb-6 text-slate-500">
-          Join EventManager to discover and attend events
+          Join EventHub to discover and attend events
         </p>
 
         {error && <Alert message={error} onClose={() => setError("")} />}
@@ -105,7 +102,7 @@ const Register = () => {
           </div>
 
           <button type="submit" className={`${btnPrimary} w-full`} disabled={loading}>
-            {loading ? "Creating account..." : "Sign Up"}
+            {loading ? "Sending OTP..." : "Sign Up"}
           </button>
         </form>
 

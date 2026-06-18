@@ -14,7 +14,7 @@ const SearchBar = ({ value, onChange, placeholder = "Search events..." }) => {
     }, 400);
 
     return () => clearTimeout(timer);
-  }, [input, onChange]);
+  }, [input]);
 
   return (
     <div className="relative mb-8">

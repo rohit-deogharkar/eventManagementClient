@@ -17,30 +17,31 @@ const Events = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const fetchEvents = useCallback(async () => {
-    setLoading(true);
-    setError("");
+  useEffect(() => {
 
-    try {
-      const data = await getEvents(page, search);
-      setEvents(data.data);
-      setTotalPages(data.pages);
-      setTotal(data.total);
-    } catch (err) {
-      setError(getErrorMessage(err));
-    } finally {
-      setLoading(false);
+    const fetchEvents =  async () => {
+      setLoading(true);
+      setError("");
+
+      try {
+        const data = await getEvents(page, search);
+        setEvents(data.data);
+        setTotalPages(data.pages);
+        setTotal(data.total);
+      } catch (err) {
+        setError(getErrorMessage(err));
+      } finally {
+        setLoading(false);
+      }
     }
+
+    fetchEvents();
   }, [page, search]);
 
-  useEffect(() => {
-    fetchEvents();
-  }, [fetchEvents]);
-
-  const handleSearchChange = useCallback((value) => {
+  const handleSearchChange = (value) => {
     setSearch(value);
     setPage(1);
-  }, []);
+  }
 
   return (
     <main className={pageClass}>
